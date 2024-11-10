@@ -1,7 +1,7 @@
-CryptoDashboard
-linechart
+# CryptoDashboard
+### linechart
 ![linechart](image/linechart.png)
-pricechanges
+### pricechanges
 ![pricechanges](image/pricechanges.png)
-marketcap
+### marketcap
 ![marketcap](image/marketcap.png)
