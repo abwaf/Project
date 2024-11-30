@@ -80,6 +80,13 @@ class CombinedDashboard:
                     ],
                     style={"marginBottom": "40px"},
                 ),
+                # Volume Chart Top-10
+                html.Div(
+                    [
+                        html.H2("Volume Chart Top-10 Crypto", style={"textAlign": "left"}),
+                        dcc.Graph(id="volume-chart"),
+                    ],
+                ),
                 # Bar Chart Section
                 html.Div(
                     [
@@ -233,6 +240,7 @@ class CombinedDashboard:
             [
                 Output("market-cap-pie", "figure"),
                 Output("crypto-table", "data"),
+                Output("volume-chart", "figure"),
                 Output("changes-chart", "figure"),
                 Output("changes-table", "data"),
                 Output("last-update-time", "children"),
@@ -246,6 +254,7 @@ class CombinedDashboard:
             # Get market cap and table data
             market_cap_figure = self.coin_cap.create_market_cap_figure()
             table_data = self.coin_cap.create_market_table()
+            volume_chart = self.coin_cap.create_volume_chart()
 
             # Get changes data
             changes_figure = self.coin_cap.create_stacked_bar_chart()
@@ -261,6 +270,7 @@ class CombinedDashboard:
             return (
                 market_cap_figure,
                 table_data,
+                volume_chart,
                 changes_figure,
                 changes_table_data,
                 update_time,

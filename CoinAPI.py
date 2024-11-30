@@ -89,7 +89,7 @@ class CoinCapProvider:
             title={
                 "text": "Cryptocurrency Price Changes Over Different Periods",
                 "y": 0.95,
-                "x": 0.5,
+                "x": 0.4,
                 "xanchor": "left",
                 "yanchor": "top",
             },
@@ -191,6 +191,7 @@ class CoinCapProvider:
                     showarrow=False,
                 )
             ],
+            height=600,
         )
 
         return fig
@@ -231,3 +232,80 @@ class CoinCapProvider:
             )
 
         return formatted_data
+
+    def create_volume_chart(self):
+
+        # Отримуємо дані про ринок
+        df = self.get_market_data()
+
+        if df is None:
+            return go.Figure()
+
+        # Перетворимо рядкові значення на числові
+        df["volumeUsd24Hr"] = pd.to_numeric(df["volumeUsd24Hr"], errors="coerce")
+
+        # Беремо топ-10 криптовалют за обсягом
+        top_10 = df.nlargest(10, "volumeUsd24Hr")
+
+        # Перетворимо обсяги в мільярди доларів для кращої читальності
+        volumes_billions = top_10["volumeUsd24Hr"].apply(lambda x: x / 1_000_000_000)
+
+        # Створюємо колірну схему: від світло-блакитного до темно-синього
+        colors = [
+            "rgb(174,214,241)",
+            "rgb(133,193,233)",
+            "rgb(93,173,226)",
+            "rgb(52,152,219)",
+            "rgb(41,128,185)",
+            "rgb(31,97,141)",
+            "rgb(21,67,96)",
+            "rgb(11,37,51)",
+            "rgb(5,17,24)",
+            "rgb(0,0,0)",
+        ]
+
+        # Створюємо стовпчасту діаграму
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    x=top_10["symbol"],
+                    y=volumes_billions,
+                    text=volumes_billions.apply(lambda x: f"${x:.2f}B"),
+                    textposition="auto",
+                    marker_color=colors,
+                    hovertemplate="<b>%{x}</b><br>"
+                    + "Обсяг торгів: $%{y:.2f}B<br>"
+                    + "<extra></extra>",
+                )
+            ]
+        )
+
+        # Налаштовуємо макет
+        fig.update_layout(
+            title={
+                "text": "Топ-10 криптовалют за обсягом торгів за 24 години",
+                "y": 0.95,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "top",
+            },
+            xaxis_title="Символ криптовалюти",
+            yaxis_title="Обсяг торгів (млрд $)",
+            showlegend=False,
+            height=600,
+            template="plotly_white",
+        )
+
+        # Додаємо тимчасову мітку
+        fig.add_annotation(
+            text=f"Дані оновлені: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            xref="paper",
+            yref="paper",
+            x=1,
+            y=-0.15,
+            showarrow=False,
+            font=dict(size=10),
+            xanchor="right",
+        )
+
+        return fig
