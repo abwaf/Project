@@ -5,3 +5,5 @@
 ![pricechanges](image/pricechanges.png)
 ### marketcap
 ![marketcap](image/marketcap.png)
+### volumechart
+![volumechart](image/volume_chart.png)
